@@ -13,8 +13,6 @@ namespace CustomMembershipProvider.Provider
 
         public InMemoryProvider()
         {
-            //var status = MembershipCreateStatus.UserRejected;
-            //var troy = CreateUser("troy", "password","email", null, null, true, "troy", out status);  
         }
 
 
@@ -76,16 +74,16 @@ namespace CustomMembershipProvider.Provider
 
         public override bool DeleteUser(string username, bool deleteAllRelatedData)
         {
-            throw new NotImplementedException();
+            return _users.Remove(username);
         }
 
-        private bool _enablePasswordReset;
+        private bool _enablePasswordReset = true;
         public override bool EnablePasswordReset
         {
             get { return _enablePasswordReset; }
         }
 
-        private bool _enablePasswordRetrieval;
+        private bool _enablePasswordRetrieval = true;
         public override bool EnablePasswordRetrieval
         {
             get { return _enablePasswordRetrieval; }
@@ -146,7 +144,7 @@ namespace CustomMembershipProvider.Provider
 
         public override string GetUserNameByEmail(string email)
         {
-            throw new NotImplementedException();
+            return _users.Values.Where(x => x.Email == email).FirstOrDefault().UserName;
         }
 
         public override int MaxInvalidPasswordAttempts
@@ -206,7 +204,10 @@ namespace CustomMembershipProvider.Provider
 
         public override bool ValidateUser(string username, string password)
         {
-            throw new NotImplementedException();
+            if (_users[username] == null || _users[username].password != password)
+                return false;
+            else
+                return true;
         }
 
     }
