@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
+using System.Web.Configuration;
 
 namespace CustomMembershipProvider.Provider
 {
@@ -15,6 +16,43 @@ namespace CustomMembershipProvider.Provider
         {
         }
 
+        // 
+        // A helper function to retrieve config values from the configuration file. 
+        // 
+
+        private string GetConfigValue(string configValue, string defaultValue)
+        {
+            if (String.IsNullOrEmpty(configValue))
+                return defaultValue;
+
+            return configValue;
+        }
+
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            //base.Initialize(name, config);
+            try
+            {
+                base.Initialize(name, null);
+            }
+            catch(Exception ex)
+            {
+                Console.Out.WriteLine(ex.Message);
+                //gulp
+            }
+
+            _applicationName = GetConfigValue(config["applicationName"],
+                                      System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath);
+            _maxInvalidPasswordAttempts = Convert.ToInt32(GetConfigValue(config["maxInvalidPasswordAttempts"], "5"));
+            _passwordAttemptWindow = Convert.ToInt32(GetConfigValue(config["passwordAttemptWindow"], "10"));
+            _minRequiredNonAlphanumericCharacters = Convert.ToInt32(GetConfigValue(config["minRequiredNonalphanumericCharacters"], "1"));
+            _minRequiredPasswordLength = Convert.ToInt32(GetConfigValue(config["minRequiredPasswordLength"], "7"));
+            _passwordStrengthRegularExpression = Convert.ToString(GetConfigValue(config["passwordStrengthRegularExpression"], ""));
+            _enablePasswordReset = Convert.ToBoolean(GetConfigValue(config["enablePasswordReset"], "true"));
+            _enablePasswordRetrieval = Convert.ToBoolean(GetConfigValue(config["enablePasswordRetrieval"], "true"));
+            _requiresQuestionAndAnswer = Convert.ToBoolean(GetConfigValue(config["requiresQuestionAndAnswer"], "false"));
+            _requiresUniqueEmail = Convert.ToBoolean(GetConfigValue(config["requiresUniqueEmail"], "true"));
+        }
 
         private string _applicationName;
         public override string ApplicationName
@@ -124,22 +162,22 @@ namespace CustomMembershipProvider.Provider
 
         public override int GetNumberOfUsersOnline()
         {
-            throw new NotImplementedException();
+            return _users.Values.Where(x => x.LastLoginDate > DateTime.Now - TimeSpan.FromMinutes(30)).Count();
         }
 
         public override string GetPassword(string username, string answer)
         {
-            throw new NotImplementedException();
+            return _users.Values.Where(x => x.passwordAnswer == answer).FirstOrDefault().password;
         }
 
         public override MembershipUser GetUser(string username, bool userIsOnline)
         {
-            throw new NotImplementedException();
+            return _users[username];
         }
 
         public override MembershipUser GetUser(object providerUserKey, bool userIsOnline)
         {
-            throw new NotImplementedException();
+            return _users.Values.Where(x => x.ProviderUserKey == providerUserKey).FirstOrDefault();
         }
 
         public override string GetUserNameByEmail(string email)
@@ -147,59 +185,77 @@ namespace CustomMembershipProvider.Provider
             return _users.Values.Where(x => x.Email == email).FirstOrDefault().UserName;
         }
 
+        private int _maxInvalidPasswordAttempts;
         public override int MaxInvalidPasswordAttempts
         {
-            get { throw new NotImplementedException(); }
+            get { return _maxInvalidPasswordAttempts; }
         }
 
+        private int _minRequiredNonAlphanumericCharacters;
         public override int MinRequiredNonAlphanumericCharacters
         {
-            get { throw new NotImplementedException(); }
+            get { return _minRequiredNonAlphanumericCharacters; }
         }
 
+        private int _minRequiredPasswordLength;
         public override int MinRequiredPasswordLength
         {
-            get { throw new NotImplementedException(); }
+            get { return _minRequiredPasswordLength; }
         }
 
+        private int _passwordAttemptWindow;
         public override int PasswordAttemptWindow
         {
-            get { throw new NotImplementedException(); }
+            get { return _passwordAttemptWindow; }
         }
 
         public override MembershipPasswordFormat PasswordFormat
         {
-            get { throw new NotImplementedException(); }
+            get { return MembershipPasswordFormat.Clear; }
         }
 
+        private string _passwordStrengthRegularExpression;
         public override string PasswordStrengthRegularExpression
         {
-            get { throw new NotImplementedException(); }
+            get { return _passwordStrengthRegularExpression; }
         }
 
+        private bool _requiresQuestionAndAnswer;
         public override bool RequiresQuestionAndAnswer
         {
-            get { throw new NotImplementedException(); }
+            get { return _requiresQuestionAndAnswer; }
         }
 
+        private bool _requiresUniqueEmail;
         public override bool RequiresUniqueEmail
         {
-            get { throw new NotImplementedException(); }
+            get { return _requiresUniqueEmail; }
         }
 
         public override string ResetPassword(string username, string answer)
         {
-            throw new NotImplementedException();
+            var user = _users[username];
+            if (user.passwordAnswer == answer)
+            {
+                if (user.ChangePassword(user.password, "password"))
+                    return "password";
+                else
+                    throw new Exception("Couldn't change password for some reason...");
+            }
+            else
+            {
+                throw new MembershipPasswordException("Your answer was incorrect, boo!");
+            }
         }
 
         public override bool UnlockUser(string userName)
         {
-            throw new NotImplementedException();
+            return GetUser(userName, false).UnlockUser();
         }
 
         public override void UpdateUser(MembershipUser user)
         {
-            throw new NotImplementedException();
+            _users[user.UserName] = user as InMemoryUser;
         }
 
         public override bool ValidateUser(string username, string password)

@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CustomMembershipProvider.Provider;
 using System.Web.Security;
+using System.Web.Configuration;
+using System.Collections.Specialized;
 
 namespace CustomMembershipProvider.Tests
 {
@@ -149,10 +151,54 @@ namespace CustomMembershipProvider.Tests
             Assert.AreEqual("troy", result1);
         }
 
+        [Test]
+        public void getters_ValuesInConfigFile_ReturnsCorrectValues()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var mrwl = sut.MinRequiredPasswordLength;
+            var mrnc = sut.MinRequiredNonAlphanumericCharacters;
+            var rqa = sut.RequiresQuestionAndAnswer;
+            var mipa = sut.MaxInvalidPasswordAttempts;
+            var paw = sut.PasswordAttemptWindow;
+
+            //Assert
+            Assert.AreEqual(6, mrwl);
+            Assert.AreEqual(0, mrnc);
+            Assert.False(rqa);
+            Assert.AreEqual(3, mipa);
+            Assert.AreEqual(15, paw);
+        }
+
+        [Test]
+        public void getters_ValuesNotInConfigFile_ReturnsDefaultValues()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var appn = sut.ApplicationName;
+            var epres = sut.EnablePasswordReset;
+            var epret = sut.EnablePasswordRetrieval;
+            var rue = sut.RequiresUniqueEmail;
+
+            //Assert
+            Assert.Null(appn);
+            Assert.True(epres);
+            Assert.True(epret);
+            Assert.True(rue);
+        }
+
 
         private InMemoryProvider getSut()
         {
             var sut = new InMemoryProvider();
+            var section = (MembershipSection)WebConfigurationManager.GetSection("system.web/membership");
+            var config = new NameValueCollection();
+
+            sut.Initialize("InMemoryProvider", section.Providers["InMemoryProvider"].Parameters);
             MembershipCreateStatus status;
             sut.CreateUser("troy", "password", "email", null, null, true, "troy", out status);
 
