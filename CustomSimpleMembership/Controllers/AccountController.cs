@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
@@ -9,10 +8,10 @@ using System.Web.Security;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
-using CustomMembershipProvider.Filters;
-using CustomMembershipProvider.Models;
+using CustomSimpleMembership.Filters;
+using CustomSimpleMembership.Models;
 
-namespace CustomMembershipProvider.Controllers
+namespace CustomSimpleMembership.Controllers
 {
     [Authorize]
     [InitializeSimpleMembership]
@@ -406,4 +405,3 @@ namespace CustomMembershipProvider.Controllers
         #endregion
     }
 }
-*/

@@ -151,6 +151,8 @@ namespace CustomMembershipProvider.Tests
             Assert.AreEqual("troy", result1);
         }
 
+
+
         [Test]
         public void getters_ValuesInConfigFile_ReturnsCorrectValues()
         {

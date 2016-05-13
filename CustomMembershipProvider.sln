@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMembershipProvider", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomMembershipProvider.Tests", "CustomMembershipProvider.Tests\CustomMembershipProvider.Tests.csproj", "{DB316DBE-7186-4F8C-83C3-85F4F363D5F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomSimpleMembership", "CustomSimpleMembership\CustomSimpleMembership.csproj", "{F34F64F5-D46C-4C33-A48F-D833E5AB749F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomizeSimpleMembership", "CustomizeSimpleMembership\CustomizeSimpleMembership.csproj", "{1E10CF17-0DAD-4727-A9B3-E61EAA4EE0CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{DB316DBE-7186-4F8C-83C3-85F4F363D5F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB316DBE-7186-4F8C-83C3-85F4F363D5F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB316DBE-7186-4F8C-83C3-85F4F363D5F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F34F64F5-D46C-4C33-A48F-D833E5AB749F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F34F64F5-D46C-4C33-A48F-D833E5AB749F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F34F64F5-D46C-4C33-A48F-D833E5AB749F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F34F64F5-D46C-4C33-A48F-D833E5AB749F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E10CF17-0DAD-4727-A9B3-E61EAA4EE0CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E10CF17-0DAD-4727-A9B3-E61EAA4EE0CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E10CF17-0DAD-4727-A9B3-E61EAA4EE0CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E10CF17-0DAD-4727-A9B3-E61EAA4EE0CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
