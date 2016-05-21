@@ -117,22 +117,52 @@ namespace CustomMembershipProvider.Provider
 
         public override string[] GetUsersInRole(string roleName)
         {
-            throw new NotImplementedException();
+            if (roleName == null || roleName == "")
+                throw new ArgumentException("Role name cannot be null or empty");
+
+            if (!Roles.Contains(roleName))
+                throw new ProviderException("Role does not exist!");
+
+
+            return UserRoles.Where(x => x.Value.Contains(roleName)).Select(x => x.Key).ToArray();
         }
 
         public override bool IsUserInRole(string username, string roleName)
         {
-            throw new NotImplementedException();
+            if (roleName == null || roleName == "")
+                throw new ArgumentException("Role name cannot be null or empty");
+
+            if (username == null || username == "")
+                throw new ArgumentException("Username cannot be null or empty");
+
+            if (!UserRoles.ContainsKey(username))
+                throw new ProviderException("Username not found");
+
+            if (!Roles.Contains(roleName))
+                throw new ProviderException("Role name not found");
+
+
+            return UserRoles[username].Contains(roleName);
         }
 
         public override void RemoveUsersFromRoles(string[] usernames, string[] roleNames)
         {
-            throw new NotImplementedException();
+            if (roleNames.Any(x => !Roles.Contains(x)))
+                throw new ProviderException("Some roles do not exist");
+
+            foreach (string username in usernames)
+            {
+                if (UserRoles.ContainsKey(username))
+                    UserRoles[username].RemoveAll(x => roleNames.Contains(x));
+            }
         }
 
         public override bool RoleExists(string roleName)
         {
-            throw new NotImplementedException();
+            if (roleName == null || roleName == "")
+                throw new ArgumentException("Role name cannot be null or empty");
+
+            return Roles.Contains(roleName);
         }
 
         public Dictionary<string, List<string>> UserRoles

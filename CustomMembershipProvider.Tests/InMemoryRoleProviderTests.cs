@@ -248,48 +248,268 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void Role_GetUsersInRole()
+        [ExpectedException(typeof(ProviderException))]
+        public void Role_GetUsersInRole_RoleDoesNotExist_ThrowProviderException()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            sut.GetUsersInRole("NotARole");
 
             //Assert
-            Assert.Fail();
+            //Should throw exception
         }
 
         [Test]
-        public void Role_IsUserInRole()
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_GetUsersInRole_RoleNameNull_ThrowArgumentException()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            sut.GetUsersInRole(null);
 
             //Assert
-            Assert.Fail();
+            //Should throw exception
         }
 
         [Test]
-        public void Role_RemoveUsersFromRoles()
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_GetUsersInRole_RoleNameEmpty_ThrowArgumentException()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            sut.GetUsersInRole("");
 
             //Assert
-            Assert.Fail();
+            //Should throw exception
         }
 
         [Test]
-        public void Role_RoleExists()
+        public void Role_GetUsersInRole_RoleExist_ReturnUsers()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            var result = sut.GetUsersInRole("User");
 
             //Assert
-            Assert.Fail();
+            Assert.AreEqual(2, result.Length);
         }
+
+        [Test]
+        public void Role_GetUsersInRole_RoleExist_ReturnEmptyArray()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetUsersInRole("Nerd");
+
+            //Assert
+            Assert.AreEqual(0, result.Length);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_IsUserInRole_RolenameNull_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole("Bob", null);
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_IsUserInRole_RoleNameEmpty_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole("Bob", "");
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_IsUserInRole_UserNameNull_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole(null, "User");
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_IsUserInRole_UserNameEmpty_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole("", "User");
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ProviderException))]
+        public void Role_IsUserInRole_UserNameNotInDictionary_ThrowProviderException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole("NotARealUser", "User");
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ProviderException))]
+        public void Role_IsUserInRole_RoleDoesNotExist_ThrowProviderException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.IsUserInRole("TestUser", "NotARealRole");
+
+            //Assert
+            //Throws exception
+        }
+
+        [Test]
+        public void Role_IsUserInRole_UserIsInRole_ReturnsTrue()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.IsUserInRole("TestUser", "User");
+
+            //Assert
+            Assert.True(result);
+        }
+
+        [Test]
+        public void Role_IsUserInRole_UserIsNotInRole_ReturnsFalse()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.IsUserInRole("TestUser", "Nerd");
+
+            //Assert
+            Assert.False(result);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ProviderException))]
+        public void Role_RemoveUsersFromRoles_RolesThatDoNotExistInArray_ThrowProviderException()
+        {
+            //Arrange
+            var sut = getSut();
+            var users = new string[] { "TestUser", "AdminUser" };
+            var roles = new string[] { "Dummy", "User" };
+
+            //Act
+            sut.RemoveUsersFromRoles(users, roles);
+
+            //Assert
+            //Should throw exception
+        }
+
+        [Test]
+        public void Role_RemoveUsersFromRoles_RolesAreGood_RemovesRoles()
+        {
+            //Arrange
+            var sut = getSut();
+            var users = new string[] { "TestUser", "AdminUser" };
+            var roles = new string[] { "User" };
+
+            //Act
+            sut.RemoveUsersFromRoles(users, roles);
+
+            //Assert
+            Assert.AreEqual(1, sut.UserRoles["AdminUser"].Count());
+            Assert.AreEqual(0, sut.UserRoles["TestUser"].Count());
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_RoleExists_NullPassed_ThrowArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.RoleExists(null);
+
+            //Assert
+            //Should throw exception
+        }
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_RoleExists_EmptyStringPassed_ThrowsArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            sut.RoleExists("");
+
+            //Assert
+            //Should throw exception
+        }
+
+        [Test]
+        public void Role_RoleExists_RoleDoesNotExist_ReturnFalse()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.RoleExists("Blah");
+
+            //Assert
+            Assert.False(result);
+        }
+
+        [Test]
+        public void Role_RoleExists_RoleDoesExist_ReturnTrue()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.RoleExists("User");
+
+            //Assert
+            Assert.True(result);
+        }
+
 
         private InMemoryRoleProvider getSut()
         {
