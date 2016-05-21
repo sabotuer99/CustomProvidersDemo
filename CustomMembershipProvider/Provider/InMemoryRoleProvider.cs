@@ -8,7 +8,34 @@ namespace CustomMembershipProvider.Provider
 {
     public class InMemoryRoleProvider : RoleProvider
     {
+        static Dictionary<string, List<string>> _userRoles = new Dictionary<string, List<string>>();
+        static List<string> _roles = new List<string>();
 
+
+        private string GetConfigValue(string configValue, string defaultValue)
+        {
+            if (String.IsNullOrEmpty(configValue))
+                return defaultValue;
+
+            return configValue;
+        }
+
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            //base.Initialize(name, config);
+            try
+            {
+                base.Initialize(name, null);
+            }
+            catch (Exception ex)
+            {
+                Console.Out.WriteLine(ex.Message);
+                //gulp
+            }
+
+            _applicationName = GetConfigValue(config["applicationName"],
+                                      System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath);
+        }
 
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
@@ -16,15 +43,16 @@ namespace CustomMembershipProvider.Provider
             throw new NotImplementedException();
         }
 
+        private string _applicationName;
         public override string ApplicationName
         {
             get
             {
-                throw new NotImplementedException();
+                return _applicationName;
             }
             set
             {
-                throw new NotImplementedException();
+                _applicationName = value;
             }
         }
 

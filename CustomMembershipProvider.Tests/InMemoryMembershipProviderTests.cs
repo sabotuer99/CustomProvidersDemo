@@ -11,18 +11,19 @@ using System.Collections.Specialized;
 
 namespace CustomMembershipProvider.Tests
 {
+    
     [TestFixture]
     public class InMemoryMembershipProviderTests
     {
         [Test]
-        public void ctor_sanityCheck()
+        public void Memb_ctor_sanityCheck()
         {
 
             new InMemoryProvider();
         }
 
         [Test]
-        public void CreateUser_PassValidInput_CreatesUser()
+        public void Memb_CreateUser_PassValidInput_CreatesUser()
         {
             var sut = new InMemoryProvider();
             var status = MembershipCreateStatus.UserRejected;
@@ -32,7 +33,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void FindUserByEmail_OneUserEmailMatches_RecordCountIsOne()
+        public void Memb_FindUserByEmail_OneUserEmailMatches_RecordCountIsOne()
         {
             //Arrange
             var sut = getSut();
@@ -47,7 +48,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void FindUserByName_OneUserEmailMatches_RecordCountIsOne()
+        public void Memb_FindUserByName_OneUserEmailMatches_RecordCountIsOne()
         {
             //Arrange
             var sut = getSut();
@@ -62,7 +63,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void GetAllUsers_ThreeUsers_RecordCountIsThree()
+        public void Memb_GetAllUsers_ThreeUsers_RecordCountIsThree()
         {
             //Arrange
             var sut = getSut();
@@ -80,7 +81,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void GetAllUsers_ThreeUsersPageToMiddle_RecordCountIsOne()
+        public void Memb_GetAllUsers_ThreeUsersPageToMiddle_RecordCountIsOne()
         {
             //Arrange
             var sut = getSut();
@@ -98,7 +99,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void ChangePassword_CorrectUserAndPassword_ReturnsTrue()
+        public void Memb_ChangePassword_CorrectUserAndPassword_ReturnsTrue()
         {
             //Arrange
             var sut = getSut();
@@ -113,7 +114,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void DeleteUser_UserExists_ReturnsTrue()
+        public void Memb_DeleteUser_UserExists_ReturnsTrue()
         {
             //Arrange
             var sut = getSut();
@@ -126,7 +127,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void DeleteUser_UserDoesNotExists_ReturnsFalse()
+        public void Memb_DeleteUser_UserDoesNotExists_ReturnsFalse()
         {
             //Arrange
             var sut = getSut();
@@ -139,7 +140,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void GetUsernameByEmail_UserExists_ReturnsUsername()
+        public void Memb_GetUsernameByEmail_UserExists_ReturnsUsername()
         {
             //Arrange
             var sut = getSut();
@@ -154,7 +155,7 @@ namespace CustomMembershipProvider.Tests
 
 
         [Test]
-        public void getters_ValuesInConfigFile_ReturnsCorrectValues()
+        public void Memb_getters_ValuesInConfigFile_ReturnsCorrectValues()
         {
             //Arrange
             var sut = getSut();
@@ -175,7 +176,7 @@ namespace CustomMembershipProvider.Tests
         }
 
         [Test]
-        public void getters_ValuesNotInConfigFile_ReturnsDefaultValues()
+        public void Memb_getters_ValuesNotInConfigFile_ReturnsDefaultValues()
         {
             //Arrange
             var sut = getSut();
