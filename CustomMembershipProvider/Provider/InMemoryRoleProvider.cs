@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration.Provider;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
@@ -8,9 +9,17 @@ namespace CustomMembershipProvider.Provider
 {
     public class InMemoryRoleProvider : RoleProvider
     {
-        static Dictionary<string, List<string>> _userRoles = new Dictionary<string, List<string>>();
-        static List<string> _roles = new List<string>();
+        private static Dictionary<string, List<string>> _userRoles = new Dictionary<string, List<string>>();
+        private static List<string> _roles = new List<string>();
 
+        public InMemoryRoleProvider() { }
+
+
+        public InMemoryRoleProvider(Dictionary<string, List<string>> userRoles, List<string> roles)
+        {
+            _userRoles = userRoles;
+            _roles = roles;
+        }
 
         private string GetConfigValue(string configValue, string defaultValue)
         {
@@ -40,7 +49,20 @@ namespace CustomMembershipProvider.Provider
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
-            throw new NotImplementedException();
+            if (!roleNames.All(x => Roles.Contains(x)))
+                throw new ProviderException("Some roles to not exist!");
+
+
+            foreach (string username in usernames)
+            {
+                foreach (string role in roleNames)
+                {
+                    if (!UserRoles.ContainsKey(username))
+                        UserRoles.Add(username, new List<string>());
+
+                    UserRoles[username].Add(role);
+                }
+            }
         }
 
         private string _applicationName;
@@ -58,12 +80,16 @@ namespace CustomMembershipProvider.Provider
 
         public override void CreateRole(string roleName)
         {
-            throw new NotImplementedException();
+            Roles.Add(roleName);
         }
 
         public override bool DeleteRole(string roleName, bool throwOnPopulatedRole)
         {
-            throw new NotImplementedException();
+            if (throwOnPopulatedRole && UserRoles.Values.Any(x => x.Contains(roleName)))
+                throw new ProviderException("Cannot delete populated role");
+
+            return Roles.Remove(roleName);
+
         }
 
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)
@@ -99,6 +125,21 @@ namespace CustomMembershipProvider.Provider
         public override bool RoleExists(string roleName)
         {
             throw new NotImplementedException();
+        }
+
+        public Dictionary<string, List<string>> UserRoles
+        {
+            get {
+                return InMemoryRoleProvider._userRoles;
+            }          
+        }
+
+        public List<string> Roles
+        {
+            get
+            {
+                return InMemoryRoleProvider._roles;
+            }
         }
     }
 }
