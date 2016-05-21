@@ -123,37 +123,128 @@ namespace CustomMembershipProvider.Tests
             Assert.False(sut.Roles.Contains("Nerd"));
         }
 
+
         [Test]
-        public void Role_FindUsersInRole()
+        [ExpectedException(typeof(ProviderException))]
+        public void Role_FindUsersInRole_RoleDoesNotExist_ThrowProviderException()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            sut.FindUsersInRole("NotInThere", "Bob");
 
             //Assert
-            Assert.Fail();
+            //Should throw exception
         }
 
         [Test]
-        public void Role_GetAllRoles()
+        public void Role_FindUsersInRole_RoleExistsNoMatch_ReturnsNull()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            var result = sut.FindUsersInRole("User", "Bob");
 
             //Assert
-            Assert.Fail();
+            Assert.Null(result);
         }
 
         [Test]
-        public void Role_GetRolesForUser()
+        public void Role_FindUsersInRole_RoleExistsWithMatch_ReturnsArrayOfStrings()
         {
             //Arrange
+            var sut = getSut();
 
             //Act
+            var result = sut.FindUsersInRole("User", "User");
 
             //Assert
-            Assert.Fail();
+            Assert.AreEqual(2, result.Length);
+            Assert.Contains("TestUser", result);
+        }
+
+        [Test]
+        public void Role_FindUsersInRole_RoleExistsUserNameBlank_ReturnsAllUsersInRole()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.FindUsersInRole("User", "");
+
+            //Assert
+            Assert.AreEqual(2, result.Length);
+            Assert.Contains("TestUser", result);
+        }
+
+        [Test]
+        public void Role_GetAllRoles_Succeeds()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetAllRoles();
+
+            //Assert
+            Assert.AreEqual(3, result.Length);
+            Assert.Contains("User", result);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_GetRolesForUser_NullUserName_ThrowsArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetRolesForUser(null);
+
+            //Assert
+            //Should throw exception
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Role_GetRolesForUser_EmptyUserName_ThrowsArgumentException()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetRolesForUser("");
+
+            //Assert
+            //Should throw exception
+        }
+
+        [Test]
+        public void Role_GetRolesForUser_GoodUserName_ReturnsRoles()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetRolesForUser("AdminUser");
+
+            //Assert
+            Assert.AreEqual(2, result.Length);
+        }
+
+        [Test]
+        public void Role_GetRolesForUser_UsernameNotInData_ReturnsEmptyArray()
+        {
+            //Arrange
+            var sut = getSut();
+
+            //Act
+            var result = sut.GetRolesForUser("Nobody");
+
+            //Assert
+            Assert.AreEqual(0, result.Length);
         }
 
         [Test]

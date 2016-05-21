@@ -94,17 +94,25 @@ namespace CustomMembershipProvider.Provider
 
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)
         {
-            throw new NotImplementedException();
+            if (!Roles.Contains(roleName))
+                throw new ProviderException("Role does not exist!");
+
+            var users = UserRoles.Where(x => x.Value.Contains(roleName) && x.Key.Contains(usernameToMatch)).Select(x => x.Key).ToArray();
+
+            return users.Length == 0 ? null : users;
         }
 
         public override string[] GetAllRoles()
         {
-            throw new NotImplementedException();
+            return Roles.ToArray();
         }
 
         public override string[] GetRolesForUser(string username)
         {
-            throw new NotImplementedException();
+            if(username == null || username == "")
+                throw new ArgumentException("Username cannot be null or empty");
+
+            return UserRoles.ContainsKey(username) ? UserRoles[username].ToArray() : new string[0];
         }
 
         public override string[] GetUsersInRole(string roleName)
